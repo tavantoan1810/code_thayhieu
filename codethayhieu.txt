@@ -1,0 +1,194 @@
+package studentmanager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Learner {
+    private final String studentId;
+    private final String studentName;
+    private double score;
+
+    public Learner(String studentId, String studentName, double score) {
+        this.studentId = studentId;
+        this.studentName = studentName;
+        this.score = score;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double newScore) {
+        this.score = newScore;
+    }
+
+    public String determineRank() {
+        if (score < 5.0) return "Poor";
+        else if (score < 6.5) return "Average";
+        else if (score < 7.5) return "Good";
+        else if (score < 9.0) return "Very Good";
+        return "Excellent";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %s, Name: %s, Score: %.2f, Rank: %s", studentId, studentName, score, determineRank());
+    }
+}
+
+public class StudentManager {
+    private static final List<Learner> learners = new ArrayList<>();
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        boolean running = true;
+        while (running) {
+            showMenu();
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+            switch (choice) {
+                case 1 -> addNewStudent();
+                case 2 -> modifyStudentScore();
+                case 3 -> removeStudent();
+                case 4 -> sortStudentsByScore();
+                case 5 -> searchStudent();
+                case 6 -> displayAllStudents();
+                case 0 -> {
+                    System.out.println("Exiting...");
+                    running = false;
+                }
+                default -> System.out.println("Invalid selection, please try again.");
+            }
+        }
+    }
+
+    private static void showMenu() {
+        System.out.println("\nStudent Management System:");
+        System.out.println("1. Add Student");
+        System.out.println("2. Update Student Score");
+        System.out.println("3. Delete Student");
+        System.out.println("4. Sort Students by Score");
+        System.out.println("5. Find Student by ID");
+        System.out.println("6. Display All Students");
+        System.out.println("0. Exit");
+    }
+
+    private static void addNewStudent() {
+        System.out.print("Enter Student ID: ");
+        String studentId = scanner.nextLine();
+        System.out.print("Enter Student Name: ");
+        String studentName = scanner.nextLine();
+        System.out.print("Enter Student Score: ");
+        double score = scanner.nextDouble();
+
+        learners.add(new Learner(studentId, studentName, score));
+        System.out.println("Student successfully added.");
+    }
+/-strong/-heart:>:o:-((:-h private static void modifyStudentScore() {
+        System.out.print("Enter Student ID: ");
+        String studentId = scanner.nextLine();
+        Learner learner = findStudent(studentId);
+        if (learner != null) {
+            System.out.print("Enter new score: ");
+            double newScore = scanner.nextDouble();
+            learner.setScore(newScore);
+            System.out.println("Score updated successfully.");
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+
+    private static void removeStudent() {
+        System.out.print("Enter Student ID: ");
+        String studentId = scanner.nextLine();
+        Learner learner = findStudent(studentId);
+        if (learner != null) {
+            learners.remove(learner);
+            System.out.println("Student successfully removed.");
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+
+    private static void sortStudentsByScore() {
+        List<Learner> sortedLearners = mergeSort(learners);
+        learners.clear();
+        learners.addAll(sortedLearners);
+        System.out.println("Students sorted by score using Merge Sort.");
+    }
+    private static List<Learner> mergeSort(List<Learner> list) {
+        if (list.size() <= 1) {
+            return list;
+        }
+        int mid = list.size() / 2;
+        List<Learner> left = mergeSort(list.subList(0, mid));
+        List<Learner> right = mergeSort(list.subList(mid, list.size()));
+
+        return merge(left, right);
+    }
+
+    private static List<Learner> merge(List<Learner> left, List<Learner> right) {
+        List<Learner> merged = new ArrayList<>();
+        int i = 0, j = 0;
+
+        while (i < left.size() && j < right.size()) {
+            if (left.get(i).getScore() > right.get(j).getScore()) {
+                merged.add(left.get(i));
+                i++;
+            } else {
+                merged.add(right.get(j));
+                j++;
+            }
+        }
+
+        while (i < left.size()) {
+            merged.add(left.get(i));
+            i++;
+        }
+
+        while (j < right.size()) {
+            merged.add(right.get(j));
+            j++;
+        }
+
+        return merged;
+    }
+
+    private static void searchStudent() {
+        System.out.print("Enter Student ID: ");
+        String studentId = scanner.nextLine();
+        Learner learner = findStudent(studentId);
+        if (learner != null) {
+            System.out.println(learner);
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+
+    private static Learner findStudent(String studentId) {
+        for (Learner learner : learners) {
+            if (learner.getStudentId().equals(studentId)) {
+                return learner;
+            }
+        }
+        return null;
+    }
+
+    private static void displayAllStudents() {
+        if (learners.isEmpty()) {
+            System.out.println("No students registered.");
+        } else {
+            for (Learner learner : learners) {/-strong/-heart:>:o:-((:-h System.out.println(learner);
+            }
+        }
+    }
+}
